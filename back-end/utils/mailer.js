@@ -4,7 +4,7 @@ const secrets = require('../secrets.json');
 class Mailer {
     static async sendMail(recipient, subject, body) {
         const transporter = nodemailer.createTransport({
-            service: 'outlook',
+            service: 'gmail',
             auth: {
                 user: secrets.email,
                 pass: secrets.password
