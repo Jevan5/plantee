@@ -1,0 +1,21 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Owned Plants</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <app-add-owned-plant-button (ownedPlantCreatedEvent)="ownedPlantCreated($event)"></app-add-owned-plant-button>
+  <ion-list>
+    <ion-item *ngFor="let ownedPlant of ownedPlants">
+      <ion-label (click)="viewOwnedPlant(ownedPlant)">
+        <h1>{{ownedPlant.name}}</h1>
+        <p>Water it <b>{{ownedPlant.amountWaterMl}}ml</b> every <b>{{ownedPlant.wateringPeriodDays}} day{{ownedPlant.wateringPeriodDays === 1 ? '' : 's'}}</b></p>
+      </ion-label>
+      <app-delete-owned-plant-button [ownedPlant]="ownedPlant" (ownedPlantDeletedEvent)="ownedPlantDeleted($event)"></app-delete-owned-plant-button>
+    </ion-item>
+  </ion-list>
+</ion-content>

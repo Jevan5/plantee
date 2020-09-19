@@ -1,0 +1,26 @@
+<ion-app>
+  <ion-split-pane contentId="main-content">
+    <ion-menu contentId="main-content" type="overlay">
+      <ion-content>
+        <ion-list id="page-list">
+          <ion-list-header>Plantee</ion-list-header>
+          <ion-note>{{auth.loggedIn ? auth.user.email : ''}}</ion-note>
+
+          <ion-menu-toggle *ngFor="let page of pages" auto-hide="false">
+            <ion-item [routerLink]="[page.url]">
+              <ion-label>{{page.title}}</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+        </ion-list>
+        <ion-list id="action-list">
+          <ion-menu-toggle *ngFor="let action of actions" auto-hide="false">
+            <ion-item (click)="action.func()">
+              <ion-label>{{action.title}}</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+        </ion-list>
+      </ion-content>
+    </ion-menu>
+    <ion-router-outlet id="main-content"></ion-router-outlet>
+  </ion-split-pane>
+</ion-app>
