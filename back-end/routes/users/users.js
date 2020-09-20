@@ -16,7 +16,7 @@ router.route('/')
     })
     .post(async (req, res) => {
         try {
-            const authentication = CryptoHelper.generateRandomString();
+            const authentication = CryptoHelper.generateRandomString(CryptoHelper.authenticationLength).toUpperCase();
             const salt = CryptoHelper.generateRandomString();
 
             const user = await User.saveDoc({
@@ -29,7 +29,7 @@ router.route('/')
                 salt: salt
             });
 
-            await Mailer.sendMail(user.email, 'Authenticate Account', `Please click the link below to complete your registration:\n\n${environment.api.url}:${environment.api.port}/users/${user._id}/${authentication}`);
+            await Mailer.sendMail(user.email, 'Authenticate Account', `Hi ${user.firstName},\n\nOn behalf of the entire team, welcome to Plantee ${String.fromCodePoint(0x1F973)}\n\nMy name is Josh Evans, and I designed this app to help people like yourself and I who just want to keep our ${String.fromCodePoint(0x1F331)}'s alive and ${String.fromCodePoint(0x1F603)}\n\nPlease use this authentication code to authenticate your account: ${authentication}\n\nHappy planting ${String.fromCodePoint(0x1F44B)}\n\nCheers,\nJosh Evans\n\nFound of Plantee`);
 
             res.send({ user: user });
         } catch (err) {
@@ -47,7 +47,7 @@ router.route('/login')
     });
 
 router.route('/:_userId/:authentication')
-    .get(async (req, res) => {
+    .put(async (req, res) => {
         try {
             const user = await User.findById(req.params._userId);
             if (user === null) throw `_userId (${req.params._userId}) does not exist.`;
@@ -57,7 +57,7 @@ router.route('/:_userId/:authentication')
                 return;
             }
 
-            if (!CryptoHelper.hashEquals(req.params.authentication, user.salt, user.hashedAuthentication)) throw `authentication (${req.params.authentication}) is invalid.`;
+            if (!CryptoHelper.hashEquals(req.params.authentication.toUpperCase(), user.salt, user.hashedAuthentication)) throw `authentication (${req.params.authentication}) is invalid.`;
 
             user.hashedAuthentication = '';
 

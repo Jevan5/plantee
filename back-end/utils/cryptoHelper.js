@@ -9,8 +9,12 @@ class CryptoHelper {
         return 16;
     }
 
-    static generateRandomString() {
-        return crypto.randomBytes(Math.ceil(CryptoHelper.minSecureLength / 2)).toString('hex').slice(0, CryptoHelper.minSecureLength);
+    static get authenticationLength() {
+        return 6;
+    }
+
+    static generateRandomString(length = CryptoHelper.minSecureLength) {
+        return crypto.randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, CryptoHelper.minSecureLength);
     }
 
     static hash(plaintext, salt) {
