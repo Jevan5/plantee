@@ -255,7 +255,7 @@ describe('PUT', () => {
             const res = await request(app).put(`/users/authenticate?email=${email}&authentication=${authentication.toLowerCase()}`);
 
             expect(res.status).to.eql(200);
-            expect(res.text).to.eql(`user (${email}) has been authenticated.`);
+            expect(res.body).to.eql({ message: `user (${email}) has been authenticated.` });
             expect(saveSpy.calledOnce).to.be.true;
             expect(user.hashedAuthentication).to.eql('');
         });

@@ -63,7 +63,7 @@ router.route('/authenticate')
 
             await user.save();
 
-            res.send(`user (${user.email}) has been authenticated.`);
+            res.send({ message: `user (${user.email}) has been authenticated.` });
         } catch (err) {
             res.status(500).send(err);
         }
