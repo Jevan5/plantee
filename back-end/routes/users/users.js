@@ -46,18 +46,18 @@ router.route('/login')
         }
     });
 
-router.route('/:_userId/:authentication')
+router.route('/authenticate')
     .put(async (req, res) => {
         try {
-            const user = await User.findById(req.params._userId);
-            if (user === null) throw `_userId (${req.params._userId}) does not exist.`;
+            const user = await User.findOne({ email: req.query.email.toLowerCase().trim() });
+            if (user === null) throw `email (${req.query.email}) does not exist.`;
 
             if (user.hashedAuthentication === '') {
                 res.send(`user (${user.email}) is already authenticated.`);
                 return;
             }
 
-            if (!CryptoHelper.hashEquals(req.params.authentication.toUpperCase(), user.salt, user.hashedAuthentication)) throw `authentication (${req.params.authentication}) is invalid.`;
+            if (!CryptoHelper.hashEquals(req.query.authentication.toUpperCase(), user.salt, user.hashedAuthentication)) throw `authentication (${req.query.authentication}) is invalid.`;
 
             user.hashedAuthentication = '';
 

@@ -10,6 +10,7 @@ const User = require('../../models/user/user');
 
 let authenticateRequestStub;
 let findByIdStub;
+let findOneStub;
 let findStub;
 let generateRandomStringSpy;
 let saveDocStub;
@@ -26,6 +27,7 @@ const _id = '123';
 async function getAll() {
     authenticateRequestStub = sinon.stub(Auth, 'authenticateRequest');
     findByIdStub = sinon.stub(User, 'findById');
+    findOneStub = sinon.stub(User, 'findOne');
     findStub = sinon.stub(User, 'find');
     generateRandomStringSpy = sinon.spy(CryptoHelper, 'generateRandomString');
     saveDocStub = sinon.stub(User, 'saveDoc');
@@ -35,6 +37,7 @@ async function getAll() {
 async function restoreAll() {
     authenticateRequestStub.restore();
     findByIdStub.restore();
+    findOneStub.restore();
     findStub.restore();
     generateRandomStringSpy.restore();
     saveDocStub.restore();
@@ -177,33 +180,32 @@ describe('POST', () => {
 });
 
 describe('PUT', () => {
-    describe('/:_userId/:authentication', () => {
-
+    describe('/authenticate?email&authentication', () => {
         beforeEach(getAll);
         afterEach(restoreAll);
 
-        it('should reject when error thrown by finding a user', async () => {
-            findByIdStub.throws(error);
+        it('should reject when error thrown by User.findOne()', async () => {
+            findOneStub.throws(error);
 
-            const res = await request(app).put('/users/123/abc');
+            const res = await request(app).put(`/users/authenticate?email=${email}&authentication=123`);
 
             expect(res.status).to.eql(500);
             expect(JSON.parse(res.error.text).name).to.eql(error);
         });
 
-        it('should reject with non-existent id', async () => {
-            findByIdStub.returns(new Promise((resolve) => resolve(null)));
+        it('should reject with non-existent email', async () => {
+            findOneStub.returns(new Promise((resolve) => resolve(null)));
 
-            const res = await request(app).put(`/users/${_id}/abc`);
+            const res = await request(app).put(`/users/authenticate?email=${email}`);
 
             expect(res.status).to.eql(500);
-            expect(res.error.text).to.eql(`_userId (${_id}) does not exist.`);
+            expect(res.error.text).to.eql(`email (${email}) does not exist.`);
         });
 
         it('should ignore an already authenticated user', async () => {
-            findByIdStub.returns(new Promise((resolve) => resolve({ email, hashedAuthentication: '' })));
+            findOneStub.returns(new Promise((resolve) => resolve({ email, hashedAuthentication: '' })));
 
-            const res = await request(app).put(`/users/${_id}/abc`);
+            const res = await request(app).put(`/users/authenticate?email=${email}&authentication=123`);
 
             expect(res.status).to.eql(200);
             expect(res.text).to.eql(`user (${email}) is already authenticated.`);
@@ -215,15 +217,15 @@ describe('PUT', () => {
             const hashedAuthentication = CryptoHelper.hash(authentication, salt);
             const wrongAuthentication = 'some wrong authentication';
 
-            findByIdStub.returns(new Promise((resolve) => resolve({ salt, hashedAuthentication })));
+            findOneStub.returns(new Promise((resolve) => resolve({ salt, hashedAuthentication })));
 
-            const res = await request(app).put(`/users/123/${wrongAuthentication}`);
+            const res = await request(app).put(`/users/authenticate?email=${email}&authentication=${wrongAuthentication}`);
 
             expect(res.status).to.eql(500);
             expect(res.error.text).to.eql(`authentication (${wrongAuthentication}) is invalid.`);
         });
 
-        it('should reject when error thrown by saving a user', async () => {
+        it('should reject when error thrown by User.saveDoc()', async () => {
             const salt = 'some salt';
             const authentication = 'SOME AUTHENTICATION';
             const hashedAuthentication = CryptoHelper.hash(authentication, salt);
@@ -232,9 +234,9 @@ describe('PUT', () => {
             const saveStub = sinon.stub(user, 'save');
             saveStub.throws(error);
 
-            findByIdStub.returns(new Promise((resolve) => resolve(user)));
+            findOneStub.returns(new Promise((resolve) => resolve(user)));
 
-            const res = await request(app).put(`/users/123/${authentication}`);
+            const res = await request(app).put(`/users/authenticate?email=${email}&authentication=${authentication.toLowerCase()}`);
 
             expect(res.status).to.eql(500);
             expect(JSON.parse(res.error.text).name).to.eql(error);
@@ -248,9 +250,9 @@ describe('PUT', () => {
             const user = { email, salt, hashedAuthentication, save: () => {} };
             const saveSpy = sinon.spy(user, 'save');
 
-            findByIdStub.returns(new Promise((resolve) => resolve(user)));
+            findOneStub.returns(new Promise((resolve) => resolve(user)));
 
-            const res = await request(app).put(`/users/123/${authentication}`);
+            const res = await request(app).put(`/users/authenticate?email=${email}&authentication=${authentication.toLowerCase()}`);
 
             expect(res.status).to.eql(200);
             expect(res.text).to.eql(`user (${email}) has been authenticated.`);
