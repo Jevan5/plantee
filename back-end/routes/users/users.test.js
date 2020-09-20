@@ -168,8 +168,7 @@ describe('POST', () => {
             })).to.be.true;
     
             expect(sendMailStub.calledOnceWith(
-                user.email, 'Authenticate Account',
-                `Please click the link below to complete your registration:\n\n${environment.api.url}:${environment.api.port}/users/${user._id}/${authentication}`)
+                user.email, 'Authenticate Account', `Hi ${user.firstName},\n\nOn behalf of the entire team, welcome to Plantee ${String.fromCodePoint(0x1F973)}\n\nMy name is Josh Evans, and I designed Plantee to help people like yourself and I who just want to keep our ${String.fromCodePoint(0x1F331)}'s alive and ${String.fromCodePoint(0x1F603)}\n\nPlease use this authentication code to authenticate your account: ${authentication}\n\nHappy planting ${String.fromCodePoint(0x1F44B)}\n\nCheers,\nJosh Evans\nFounder of Plantee`)
             ).to.be.true;
 
             expect(resUser).to.eql(user);
