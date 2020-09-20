@@ -1,10 +1,12 @@
 const bodyParser = require('body-parser');
-const { environment } = require('./environment');
+const { Environment, environment } = require('./environment');
 const cors = require('cors');
 const express = require('express');
 const app = express();
 const Auth = require('./utils/auth');
+const fs = require('fs');
 const http = require('http');
+const https = require('https');
 const mongoose = require('mongoose');
 
 async function startServer() {
@@ -28,8 +30,18 @@ async function startServer() {
     app.use('/ownedPlants', require('./routes/ownedPlants/ownedPlants'));
     app.use('/users', require('./routes/users/users'));
 
-    http.createServer(app).listen(environment.api.port, () => {
-        console.log(`Listening at ${environment.api.url}:${environment.api.port} for HTTP connections`);
+    let server;
+    if (environment.mode === Environment.modeEnum.PROD) {
+        server = https.createServer({
+            key: fs.readFileSync('./cert/server.crt'),
+            cert: fs.readFileSync('./cert/server.key')
+        }, app);
+    } else {
+        server = http.createServer(app);
+    }
+
+    server.listen(environment.api.port, () => {
+        console.log(`Listening at ${environment.api.url}:${environment.api.port} for connections`);
     });
 }
 
