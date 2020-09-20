@@ -27,6 +27,10 @@ async function startServer() {
         next();
     });
 
+    app.get('/.well-known/pki-validation/5545AED14C807BE9ABAAC9AF41EF96C3.txt', (req, res) => {
+        res.send('CB9A7AB464E216F80A99BCBB66129CD39FDAE85398711D6C4BAD38B1C2F12934 comodoca.com 5f675d6028240');
+    });
+
     app.use('/ownedPlants', require('./routes/ownedPlants/ownedPlants'));
     app.use('/users', require('./routes/users/users'));
 
@@ -41,7 +45,7 @@ async function startServer() {
     }
 
     server.listen(environment.api.port, () => {
-        console.log(`Listening at ${environment.api.url}:${environment.api.port} for connections`);
+        console.log(`Listening at ${environment.api.url}:${environment.api.port} for HTTP${environment.mode === Environment.modeEnum.PROD ? 'S' : ''} connections`);
     });
 }
 
