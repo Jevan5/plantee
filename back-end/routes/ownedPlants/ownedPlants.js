@@ -21,11 +21,12 @@ router.route('/')
             const ownedPlant = await OwnedPlant.saveDoc({
                 _userId: user._id,
                 amountWaterMl: req.body.ownedPlant.amountWaterMl,
+                lastWatered: new Date(req.body.ownedPlant.lastWatered),
                 name: req.body.ownedPlant.name,
                 wateringPeriodDays: req.body.ownedPlant.wateringPeriodDays
             });
 
-            res.send({ ownedPlant: ownedPlant });
+            res.send({ ownedPlant });
         } catch (err) {
             res.status(500).send(err);
         }
@@ -58,6 +59,7 @@ router.route('/:_ownedPlantId')
             Auth.assertIdMatches(ownedPlant._userId, user._id);
 
             ownedPlant.amountWaterMl = req.body.ownedPlant.amountWaterMl;
+            ownedPlant.lastWatered = new Date(req.body.ownedPlant.lastWatered);
             ownedPlant.name = req.body.ownedPlant.name;
             ownedPlant.wateringPeriodDays = req.body.ownedPlant.wateringPeriodDays;
 

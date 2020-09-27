@@ -51,6 +51,22 @@ class TestUtils {
         });
     }
 
+    static rejectionTestsForDate(model, baseData, field) {
+        TestUtils.rejectionTestsForNonNull(model, baseData, field);
+
+        it(`should reject with non-date ${field}`, async () => {
+            baseData[TestUtils.dataField][field] = 'not a date';
+
+            let saved = false;
+            try {
+                await model.saveDoc(baseData[TestUtils.dataField]);
+                saved = true;
+            } catch (e) { }
+
+            if (saved) throw 'Saved';
+        });
+    }
+
     static rejectionTestsForNumber(model, baseData, field) {
         TestUtils.rejectionTestsForNonNull(model, baseData, field);
 

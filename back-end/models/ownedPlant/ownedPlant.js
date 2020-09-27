@@ -6,6 +6,7 @@ const User = require('../user/user');
 const ownedPlantSchema = new Schema({
     _userId: { type: Schema.Types.ObjectId, index: 'hashed' },
     amountWaterMl: { type: Number, required: true, min: 0 },
+    lastWatered: { type: Date, required: true },
     name: { type: String, required: true, lowercase: true, trim: true },
     wateringPeriodDays: { type: Number, required: true, min: 1 }
 });

@@ -17,6 +17,10 @@ class CryptoHelper {
         return crypto.randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, CryptoHelper.minSecureLength);
     }
 
+    static generateAuthCode() {
+        return CryptoHelper.generateRandomString(CryptoHelper.authenticationLength).toUpperCase();
+    }
+
     static hash(plaintext, salt) {
         return crypto.pbkdf2Sync(plaintext, salt, 10000, CryptoHelper.keyLength, 'sha512').toString('hex');
     }

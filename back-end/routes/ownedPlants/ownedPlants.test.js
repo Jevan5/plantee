@@ -12,9 +12,11 @@ const id = '456';
 const userId = '123';
 const password = 'some password';
 const amountWaterMl = 100;
+const lastWatered = new Date();
 const name = 'cactus';
 const wateringPeriodDays = 3;
 const newAmountWaterMl = 150;
+const newLastWatered = new Date();
 const newName = 'cactus 2';
 const newWateringPeriodDays = 5;
 
@@ -215,6 +217,7 @@ describe('POST', () => {
             const res = await request(app).post('/ownedPlants').set(Auth.header, Auth.valueForHeader(email, password)).send({
                 ownedPlant: {
                     amountWaterMl,
+                    lastWatered,
                     name,
                     wateringPeriodDays
                 }
@@ -226,6 +229,7 @@ describe('POST', () => {
             expect(saveDocStub.calledOnceWith({
                 _userId: user._id,
                 amountWaterMl,
+                lastWatered,
                 name,
                 wateringPeriodDays
             })).to.be.true;
@@ -236,11 +240,12 @@ describe('POST', () => {
             const ownedPlant = {
                 _userId: user._id,
                 amountWaterMl,
+                lastWatered,
                 name,
                 wateringPeriodDays
             };
             authenticateRequestStub.returns(new Promise((resolve) => resolve(user)));
-            saveDocStub.returns(new Promise((resolve) => resolve(ownedPlant)));
+            saveDocStub.returns(new Promise((resolve) => resolve('the new plant')));
 
             const res = await request(app).post('/ownedPlants').set(Auth.header, Auth.valueForHeader(email, password)).send({ ownedPlant });
 
@@ -248,7 +253,7 @@ describe('POST', () => {
 
             expect(authenticateRequestStub.getCalls()[0].firstArg.headers[Auth.header.toLowerCase()]).to.eql(Auth.valueForHeader(email, password));
             expect(saveDocStub.calledOnceWith(ownedPlant)).to.be.true;
-            expect(resOwnedPlant).to.eql(ownedPlant);
+            expect(resOwnedPlant).to.eql('the new plant');
         });
     });
 });
@@ -347,6 +352,7 @@ describe('PUT', () => {
             const res = await request(app).put(`/ownedPlants/${id}`).set(Auth.header, Auth.valueForHeader(email, password)).send({
                 ownedPlant: {
                     amountWaterMl: newAmountWaterMl,
+                    lastWatered: newLastWatered,
                     name: newName,
                     wateringPeriodDays: newWateringPeriodDays
                 }
@@ -361,6 +367,7 @@ describe('PUT', () => {
                 _id: id,
                 _userId: userId,
                 amountWaterMl: newAmountWaterMl,
+                lastWatered: newLastWatered,
                 name: newName,
                 wateringPeriodDays: newWateringPeriodDays
             })).to.be.true;
@@ -373,19 +380,14 @@ describe('PUT', () => {
             authenticateRequestStub.returns(new Promise((resolve) => resolve(user)));
             findByIdStub.returns(new Promise((resolve) => resolve({ _userId: userId, _id: id })));
             assertIdMatchesStub.returns(null);
-            saveDocStub.returns(new Promise((resolve) => resolve({
-                _id: id,
-                _userId: userId,
-                amountWaterMl: newAmountWaterMl,
-                name: newName,
-                wateringPeriodDays: newWateringPeriodDays
-            })));
+            saveDocStub.returns(new Promise((resolve) => resolve('the updated plant')));
 
             const res = await request(app).put(`/ownedPlants/${id}`).set(Auth.header, Auth.valueForHeader(email, password)).send({
                 ownedPlant: {
                     _id: newId,
                     _userId: newUserId,
                     amountWaterMl: newAmountWaterMl,
+                    lastWatered: newLastWatered,
                     name: newName,
                     wateringPeriodDays: newWateringPeriodDays
                 }
@@ -399,16 +401,11 @@ describe('PUT', () => {
                 _id: id,
                 _userId: userId,
                 amountWaterMl: newAmountWaterMl,
+                lastWatered: newLastWatered,
                 name: newName,
                 wateringPeriodDays: newWateringPeriodDays
             })).to.be.true;
-            expect(res.body.ownedPlant).to.eql({
-                _id: id,
-                _userId: userId,
-                amountWaterMl: newAmountWaterMl,
-                name: newName,
-                wateringPeriodDays: newWateringPeriodDays
-            });
+            expect(res.body.ownedPlant).to.eql('the updated plant');
         });
     });
 });

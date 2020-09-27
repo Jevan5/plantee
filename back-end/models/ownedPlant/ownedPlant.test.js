@@ -15,6 +15,7 @@ async function resetData() {
         email: 'something@something.com',
         firstName: 'John',
         hashedAuthentication: 'some hash',
+        hashedNewPassword: 'some other other hash',
         hashedPassword: 'some other hash',
         lastName: 'Jacob',
         salt: 'some salt'
@@ -22,6 +23,7 @@ async function resetData() {
     ownedPlantData[d] = {
         _userId: user._id,
         amountWaterMl: 100,
+        lastWatered: new Date(),
         name: ' Cactus',
         wateringPeriodDays: 3
     };
@@ -39,6 +41,12 @@ describe('Saving', () => {
             beforeEach(resetData);
 
             TestUtils.rejectionTestsForRange(OwnedPlant, ownedPlantData, 'amountWaterMl', 0, null);
+        });
+
+        describe('lastWatered', () => {
+            beforeEach(resetData);
+
+            TestUtils.rejectionTestsForDate(OwnedPlant, ownedPlantData, 'lastWatered');
         });
 
         describe('name', () => {
@@ -114,6 +122,7 @@ describe('Saving', () => {
                 email: 'somethingelse@something.com',
                 firstName: 'John',
                 hashedAuthentication: 'some hash',
+                hashedNewPassword: 'some other other hash',
                 hashedPassword: 'some other hash',
                 lastName: 'Jacob',
                 salt: 'some salt'

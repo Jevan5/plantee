@@ -12,6 +12,7 @@ async function resetData() {
         email: ' test Email ',
         firstName: 'test firstName',
         hashedAuthentication: 'test hashedAuthentication',
+        hashedNewPassword: 'test hashedNewPassword',
         hashedPassword: 'test hashedPassword',
         lastName: 'test lastName',
         salt: 'test salt'
@@ -90,6 +91,12 @@ describe('Saving', () => {
             TestUtils.rejectionTestsForString(User, userData, 'hashedAuthentication');
         });
 
+        describe('hashedNewPassword', () => {
+            beforeEach(resetData);
+
+            TestUtils.rejectionTestsForString(User, userData, 'hashedNewPassword');
+        });
+
         describe('hashedPassword', () => {
             beforeEach(resetData);
 
@@ -119,6 +126,7 @@ describe('Saving', () => {
             expect(user.email).to.be.eql(userData[d].email.toLowerCase().trim());
             expect(user.firstName).to.be.eql(userData[d].firstName);
             expect(user.hashedAuthentication).to.be.eql(userData[d].hashedAuthentication);
+            expect(user.hashedNewPassword).to.be.eql(userData[d].hashedNewPassword);
             expect(user.hashedPassword).to.be.eql(userData[d].hashedPassword);
             expect(user.lastName).to.be.eql(userData[d].lastName);
             expect(user.salt).to.be.eql(userData[d].salt);

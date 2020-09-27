@@ -29,14 +29,14 @@ class Auth {
         const email = authorization.substring(0, index);
         const password = authorization.substring(index + this.delimeter.length);
 
-        const user = await User.findOne({ email: email });
+        const user = await User.findByEmail(email);
         if (user == null) throw ErrorMessage.create(`Email (${email}) does not exist.`, ErrorMessage.codes.NOT_FOUND);
 
         if (user.disabled) throw ErrorMessage.create(`User (${email}) is disabled.`, ErrorMessage.codes.UNAUTHORIZED);
 
-        if (user.hashedAuthentication) throw ErrorMessage.create(`User (${email}) has not yet authenticated.`);
-
         if (!CryptoHelper.hashEquals(password, user.salt, user.hashedPassword)) throw ErrorMessage.create(`Invalid password for user ${email}.`, ErrorMessage.codes.UNAUTHORIZED);
+
+        if (Auth.pendingRegistrationAuthentication(user)) throw ErrorMessage.create(`User (${email}) has not yet authenticated.`);
 
         return user;
     }
@@ -51,6 +51,14 @@ class Auth {
 
     static assertIdMatches(id, otherId) {
         if (!Auth.idMatches(id, otherId)) throw ErrorMessage.create(Auth.errors.NOT_AUTHORIZED, ErrorMessage.codes.UNAUTHORIZED);
+    }
+
+    static pendingRegistrationAuthentication(user) {
+        return user.hashedAuthentication !== '' && user.hashedNewPassword === '';
+    }
+
+    static pendingPasswordChangeAuthentication(user) {
+        return user.hashedAuthentication !== '' && user.hashedNewPassword !== '';
     }
 }
 
