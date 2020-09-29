@@ -22,10 +22,10 @@ async function resetData() {
     });
     ownedPlantData[d] = {
         _userId: user._id,
-        amountWaterMl: 100,
+        amountWaterMl: 100.1,
         lastWatered: new Date(),
         name: ' Cactus',
-        wateringPeriodDays: 3
+        wateringPeriodDays: 3.5
     };
 }
 
@@ -109,9 +109,9 @@ describe('Saving', () => {
             const ownedPlant = await OwnedPlant.saveDoc(ownedPlantData[d]);
 
             expect(ownedPlant._userId).to.be.eql(ownedPlantData[d]._userId);
-            expect(ownedPlant.amountWaterMl).to.be.eql(ownedPlantData[d].amountWaterMl);
+            expect(ownedPlant.amountWaterMl).to.be.eql(Math.floor(ownedPlantData[d].amountWaterMl));
             expect(ownedPlant.name).to.be.eql(ownedPlantData[d].name.toLowerCase().trim());
-            expect(ownedPlant.wateringPeriodDays).to.be.eql(ownedPlantData[d].wateringPeriodDays);
+            expect(ownedPlant.wateringPeriodDays).to.be.eql(Math.floor(ownedPlantData[d].wateringPeriodDays));
         });
 
         it('should save an OwnedPlant with the same name, for a different user', async () => {

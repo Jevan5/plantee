@@ -15,6 +15,10 @@ ownedPlantSchema.index({ _userId: 1, name: 1 }, { unique: true });
 
 ownedPlantSchema.pre('save', async function() {
     await SchemaValidator.assertIdExists('_userId', this._userId, User);
+    await SchemaValidator.assertNotNull('amountWaterMl', this.amountWaterMl, User);
+    this.amountWaterMl = Math.floor(this.amountWaterMl);
+    await SchemaValidator.assertNotNull('wateringPeriodDays', this.wateringPeriodDays, User);
+    this.wateringPeriodDays = Math.floor(this.wateringPeriodDays);
 });
 
 let OwnedPlant;
