@@ -1,6 +1,6 @@
 export default abstract class Document {
     static readonly nameForSingle: string;
-    static readonly nameForMultiple: string;
+    static readonly routeName: string;
 
     public _id: string;
     public __v: number;

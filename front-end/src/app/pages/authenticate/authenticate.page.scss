@@ -1,0 +1,15 @@
+h3 {
+    color: var(--ion-color-secondary);
+    text-align: center;
+}
+
+ion-img {
+    height: 128px;
+    width: 128px;
+    left: calc(50% - 64px);
+    position: relative;
+}
+
+p {
+    text-align: center;
+}

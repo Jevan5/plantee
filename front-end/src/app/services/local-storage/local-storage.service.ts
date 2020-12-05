@@ -8,15 +8,15 @@ const { Storage } = Plugins;
 export class LocalStorageService {
   constructor() { }
 
-  async set(key: string, value: any): Promise<void> {
+  async set(key: string, value: string): Promise<void> {
     await Storage.set({
       key,
-      value: JSON.stringify(value)
+      value
     });
   }
 
-  async get(key: string): Promise<any> {
-    return JSON.parse((await Storage.get({ key })).value);
+  async get(key: string): Promise<string> {
+    return (await Storage.get({ key })).value;
   }
 
   async remove(key: string): Promise<void> {

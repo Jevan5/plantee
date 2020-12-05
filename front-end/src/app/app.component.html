@@ -1,6 +1,6 @@
 <ion-app>
   <ion-split-pane contentId="main-content">
-    <ion-menu contentId="main-content" type="overlay">
+    <ion-menu *ngIf="auth.loggedIn" contentId="main-content" type="overlay">
       <ion-content>
         <ion-list id="page-list">
           <ion-list-header>Plantee</ion-list-header>

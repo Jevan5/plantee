@@ -7,11 +7,13 @@ import { AuthService } from 'src/app/services/auth/auth.service';
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-  private static readonly notLoggedInUrls = ['/login', '/register'];
-  private get defaultNotLoggedInUrlTree(): UrlTree {
+  private static readonly notLoggedInUrls = ['/login', '/register', '/authenticate', '/forgot-password'];
+
+  get defaultNotLoggedInUrlTree(): UrlTree {
     return this.router.createUrlTree(['/login']);
   }
-  private get defaultLoggedInUrlTree(): UrlTree {
+  
+  get defaultLoggedInUrlTree(): UrlTree {
     return this.router.createUrlTree(['/owned-plants'])
   }
 

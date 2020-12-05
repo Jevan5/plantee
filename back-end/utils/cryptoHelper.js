@@ -5,16 +5,8 @@ class CryptoHelper {
         return 64;
     }
 
-    static get minSecureLength() {
-        return 16;
-    }
-
-    static get authenticationLength() {
-        return 6;
-    }
-
-    static generateRandomString(length = CryptoHelper.minSecureLength) {
-        return crypto.randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, CryptoHelper.minSecureLength);
+    static generateRandomString(length) {
+        return crypto.randomBytes(length).toString('hex').slice(0, length);
     }
 
     static generateAuthCode() {

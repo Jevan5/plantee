@@ -65,9 +65,6 @@ describe('AuthService', () => {
 
     const user = await service.login(userData.email, password);
 
-    console.log('THE CALLS');
-    console.log(httpGetSpy.calls.first());
-
     expect(httpGetSpy.calls.count()).toEqual(1);
     expect(httpGetSpy.calls.first().args[0]).toEqual(`${environment.backEnd.url}:${environment.backEnd.port}/users/login`);
     expect((<any>httpGetSpy.calls.first().args[1]).headers).toEqual(httpHeaders);

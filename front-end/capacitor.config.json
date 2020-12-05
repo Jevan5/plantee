@@ -1,5 +1,5 @@
 {
-  "appId": "com.plantee.app",
+  "appId": "ca.joshuaevans.plantee",
   "appName": "plantee",
   "bundledWebRuntime": false,
   "npmClient": "npm",

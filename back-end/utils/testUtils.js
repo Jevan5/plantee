@@ -5,6 +5,10 @@ class TestUtils {
         return 'data';
     }
 
+    static get errorNotThrownMessage() {
+        return 'Error was not thrown.';
+    }
+
     static rejectionTestsForDefined(model, baseData, field) {
         it(`should reject with undefined ${field}`, async () => {
             baseData[TestUtils.dataField][field] = undefined;

@@ -17,7 +17,7 @@ export class DocumentService {
 
   async delete<D extends Document>(id: string, model): Promise<D> {
     try {
-      const res = await this.http.delete(`${environment.backEnd.url}:${environment.backEnd.port}/${model.nameForMultiple}/${id}`, {
+      const res = await this.http.delete(`${environment.backEnd.url}:${environment.backEnd.port}/${model.routeName}/${id}`, {
         headers: this.auth.getAuthorizationHeader()
       }).toPromise();
 
@@ -29,7 +29,7 @@ export class DocumentService {
 
   async getOne<D extends Document>(id: string, model): Promise<D> {
     try {
-      const res = await this.http.get(`${environment.backEnd.url}:${environment.backEnd.port}/${model.nameForMultiple}/${id}`, {
+      const res = await this.http.get(`${environment.backEnd.url}:${environment.backEnd.port}/${model.routeName}/${id}`, {
         headers: this.auth.getAuthorizationHeader()
       }).toPromise();
   
@@ -41,13 +41,13 @@ export class DocumentService {
 
   async getMany<D extends Document>(model): Promise<D[]> {
     try {
-      const res = await this.http.get(`${environment.backEnd.url}:${environment.backEnd.port}/${model.nameForMultiple}`, {
+      const res = await this.http.get(`${environment.backEnd.url}:${environment.backEnd.port}/${model.routeName}`, {
         headers: this.auth.getAuthorizationHeader()
       }).toPromise();
 
       const docs = [];
 
-      res[model.nameForMultiple].forEach((doc) => {
+      res[model.routeName].forEach((doc) => {
         docs.push(new model(doc));
       });
 
@@ -63,7 +63,7 @@ export class DocumentService {
         const body = {};
         body[model.nameForSingle] = doc;
 
-        const res = await this.http.post(`${environment.backEnd.url}:${environment.backEnd.port}/${model.nameForMultiple}`, body, {
+        const res = await this.http.post(`${environment.backEnd.url}:${environment.backEnd.port}/${model.routeName}`, body, {
           headers: this.auth.getAuthorizationHeader()
         }).toPromise();
 
@@ -72,7 +72,7 @@ export class DocumentService {
         const body = {};
         body[model.nameForSingle] = doc;
 
-        const res = await this.http.put(`${environment.backEnd.url}:${environment.backEnd.port}/${model.nameForMultiple}/${doc._id}`, body, {
+        const res = await this.http.put(`${environment.backEnd.url}:${environment.backEnd.port}/${model.routeName}/${doc._id}`, body, {
           headers: this.auth.getAuthorizationHeader()
         }).toPromise();
 

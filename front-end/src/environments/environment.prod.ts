@@ -1,3 +1,7 @@
 export const environment = {
-  production: true
+  production: true,
+  backEnd: {
+    url: 'https://joshuaevans.ca',
+    port: 443
+  }
 };

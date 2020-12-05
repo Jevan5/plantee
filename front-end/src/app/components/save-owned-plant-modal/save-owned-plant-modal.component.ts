@@ -12,13 +12,13 @@ import OwnedPlant from 'src/app/models/owned-plant';
 export class SaveOwnedPlantModalComponent implements OnInit {
   @Input() ownedPlant: OwnedPlant;
 
-  private name: string;
-  private amountWaterMl: number;
-  private wateringPeriodDays: number;
+  name: string;
+  amountWaterMl: number;
+  wateringPeriodDays: number;
 
   constructor(
     private document: DocumentService,
-    private modalController: ModalController,
+    public modalController: ModalController,
     private responsive: ResponsiveService
   ) { }
 
@@ -30,7 +30,7 @@ export class SaveOwnedPlantModalComponent implements OnInit {
     }
   }
 
-  private creatingNewOwnedPlant(): boolean {
+  creatingNewOwnedPlant(): boolean {
     return this.ownedPlant == null;
   }
 
@@ -40,6 +40,7 @@ export class SaveOwnedPlantModalComponent implements OnInit {
         await this.responsive.setLoadingMessage(`Creating ${this.name}`);
         let newOwnedPlant = new OwnedPlant({
           amountWaterMl: this.amountWaterMl,
+          lastWatered: new Date(),
           name: this.name,
           wateringPeriodDays: this.wateringPeriodDays
         });
@@ -51,6 +52,7 @@ export class SaveOwnedPlantModalComponent implements OnInit {
         await this.responsive.setLoadingMessage(`Saving changes to ${this.ownedPlant.name}`);
         let updatedOwnedPlant = new OwnedPlant();
         updatedOwnedPlant._id = this.ownedPlant._id;
+        updatedOwnedPlant.lastWatered = this.ownedPlant.lastWatered;
         updatedOwnedPlant.name = this.name;
         updatedOwnedPlant.amountWaterMl = this.amountWaterMl;
         updatedOwnedPlant.wateringPeriodDays = this.wateringPeriodDays;

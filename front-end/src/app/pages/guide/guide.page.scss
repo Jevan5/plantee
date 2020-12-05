@@ -1,0 +1,23 @@
+ion-slides {
+    height: 100%;
+}
+
+.slide {
+    display: flex;
+    flex-direction: column;
+}
+
+ion-img {
+    height: 256px;
+    width: 256px;
+    left: calc(50% - 128px);
+    position: relative;
+}
+
+h2 {
+    color: var(--ion-color-secondary);
+}
+
+p {
+    padding: 0 40px;
+}

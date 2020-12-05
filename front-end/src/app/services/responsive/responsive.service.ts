@@ -23,6 +23,10 @@ export class ResponsiveService {
     return 3000;
   }
 
+  get errorDuration(): number {
+    return 5000;
+  }
+
   get loading(): boolean {
     return this._loading;
   }
@@ -67,7 +71,7 @@ export class ResponsiveService {
 
     this.toast = await this.toastController.create({
       color,
-      duration: this.duration,
+      duration: color === 'danger' ? this.errorDuration : this.duration,
       message
     });
 

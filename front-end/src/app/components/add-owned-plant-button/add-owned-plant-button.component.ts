@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { SaveOwnedPlantModalComponent } from '../saved-owned-plant-modal/save-owned-plant-modal.component';
+import { SaveOwnedPlantModalComponent } from '../save-owned-plant-modal/save-owned-plant-modal.component';
 import OwnedPlant from 'src/app/models/owned-plant';
 
 @Component({

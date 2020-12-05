@@ -17,8 +17,10 @@ async function resetData() {
         hashedAuthentication: 'some hash',
         hashedNewPassword: 'some other other hash',
         hashedPassword: 'some other hash',
+        hashedTokenAndIp: 'some other other other hash',
         lastName: 'Jacob',
-        salt: 'some salt'
+        salt: 'some salt',
+        tokenGeneratedTimestamp: Date.now()
     });
     ownedPlantData[d] = {
         _userId: user._id,
@@ -124,8 +126,10 @@ describe('Saving', () => {
                 hashedAuthentication: 'some hash',
                 hashedNewPassword: 'some other other hash',
                 hashedPassword: 'some other hash',
+                hashedTokenAndIp: 'some other other other hash',
                 lastName: 'Jacob',
-                salt: 'some salt'
+                salt: 'some salt',
+                tokenGeneratedTimestamp: Date.now()
             });
 
             const otherOwnedPlantData = { ...ownedPlantData[d] };

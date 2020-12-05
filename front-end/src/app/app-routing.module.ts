@@ -22,6 +22,20 @@ const routes: Routes = [
     path: 'owned-plants',
     loadChildren: () => import('./pages/owned-plants/owned-plants.module').then( m => m.OwnedPlantsPageModule),
     canActivate: [AuthGuard]
+  },
+  {
+    path: 'authenticate',
+    loadChildren: () => import('./pages/authenticate/authenticate.module').then( m => m.AuthenticatePageModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'forgot-password',
+    loadChildren: () => import('./pages/forgot-password/forgot-password.module').then( m => m.ForgotPasswordPageModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'guide',
+    loadChildren: () => import('./pages/guide/guide.module').then( m => m.GuidePageModule)
   }
 ];
 

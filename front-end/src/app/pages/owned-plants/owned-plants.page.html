@@ -8,14 +8,26 @@
 </ion-header>
 
 <ion-content>
-  <app-add-owned-plant-button (ownedPlantCreatedEvent)="ownedPlantCreated($event)"></app-add-owned-plant-button>
+  <app-add-owned-plant-button (ownedPlantCreatedEvent)="ionViewWillEnter()"></app-add-owned-plant-button>
   <ion-list>
     <ion-item *ngFor="let ownedPlant of ownedPlants">
       <ion-label (click)="viewOwnedPlant(ownedPlant)">
         <h1>{{ownedPlant.name}}</h1>
-        <p>Water it <b>{{ownedPlant.amountWaterMl}}ml</b> every <b>{{ownedPlant.wateringPeriodDays}} day{{ownedPlant.wateringPeriodDays === 1 ? '' : 's'}}</b></p>
+        <p>
+          Water it <b>{{ownedPlant.amountWaterMl}}ml</b> every <b>{{ownedPlant.wateringPeriodDays}} day{{ownedPlant.wateringPeriodDays === 1 ? '' : 's'}}</b><br>
+          <ng-container *ngIf="OwnedPlant.daysUntilNextWatering(ownedPlant) < 0">
+            Watering is <b style="color: red">{{-OwnedPlant.daysUntilNextWatering(ownedPlant)}} day{{OwnedPlant.daysUntilNextWatering(ownedPlant) === -1 ? '' : 's'}}</b> overdue
+          </ng-container>
+          <ng-container *ngIf="OwnedPlant.daysUntilNextWatering(ownedPlant) === 0">
+            Needs water <b style="color: yellow">today</b>
+          </ng-container>
+          <ng-container *ngIf="OwnedPlant.daysUntilNextWatering(ownedPlant) > 0">
+            Needs water in <b style="color: green">{{OwnedPlant.daysUntilNextWatering(ownedPlant)}} day{{OwnedPlant.daysUntilNextWatering(ownedPlant) === 1 ? '' : 's'}}</b>
+          </ng-container>
+        </p>
       </ion-label>
-      <app-delete-owned-plant-button [ownedPlant]="ownedPlant" (ownedPlantDeletedEvent)="ownedPlantDeleted($event)"></app-delete-owned-plant-button>
+      <app-water-owned-plant-button [ownedPlant]="ownedPlant" (ownedPlantWateredEvent)="ionViewWillEnter()"></app-water-owned-plant-button>
+      <app-delete-owned-plant-button [ownedPlant]="ownedPlant" (ownedPlantDeletedEvent)="ionViewWillEnter()"></app-delete-owned-plant-button>
     </ion-item>
   </ion-list>
 </ion-content>

@@ -31,6 +31,14 @@ class ErrorMessage {
     static create(message, code) {
         return ErrorMessage.createWithUser(message, message, code);
     }
+
+    static throwWithUser(user, dev, code) {
+        throw ErrorMessage.createWithUser(user, dev, code);
+    }
+
+    static throw(message, code) {
+        throw ErrorMessage.create(message, code);
+    }
 }
 
 module.exports = ErrorMessage;

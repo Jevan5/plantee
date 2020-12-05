@@ -3,7 +3,7 @@ import { DocumentService } from 'src/app/services/document/document.service';
 import { ResponsiveService } from 'src/app/services/responsive/responsive.service';
 import OwnedPlant from 'src/app/models/owned-plant';
 import { ModalController } from '@ionic/angular';
-import { SaveOwnedPlantModalComponent } from 'src/app/components/saved-owned-plant-modal/save-owned-plant-modal.component';
+import { SaveOwnedPlantModalComponent } from 'src/app/components/save-owned-plant-modal/save-owned-plant-modal.component';
 
 @Component({
   selector: 'app-owned-plants',
@@ -11,6 +11,7 @@ import { SaveOwnedPlantModalComponent } from 'src/app/components/saved-owned-pla
   styleUrls: ['./owned-plants.page.scss'],
 })
 export class OwnedPlantsPage implements OnInit {
+  OwnedPlant = OwnedPlant;
   ownedPlants: OwnedPlant[];
 
   constructor(
@@ -29,20 +30,13 @@ export class OwnedPlantsPage implements OnInit {
       await this.responsive.setLoadingMessage('Loading your plants');
       this.ownedPlants = await this.document.getMany<OwnedPlant>(OwnedPlant);
       this.ownedPlants.sort((a, b) => {
-        return a.name > b.name ? 1 : -1;
+        return OwnedPlant.daysUntilNextWatering(a) - OwnedPlant.daysUntilNextWatering(b);
       });
+      
       await this.responsive.stopLoading();
     } catch (err) {
       await this.responsive.setErrorMessage(err);
     }
-  }
-
-  async ownedPlantCreated($event): Promise<void> {
-    await this.ionViewWillEnter();
-  }
-
-  async ownedPlantDeleted($event): Promise<void> {
-    await this.ionViewWillEnter();
   }
 
   async viewOwnedPlant(ownedPlant): Promise<void> {

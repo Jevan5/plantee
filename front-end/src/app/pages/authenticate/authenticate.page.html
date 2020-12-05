@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Authenticate</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form #form="ngForm" (ngSubmit)="authenticate()">
+    <ion-grid>
+      <ion-row color="primary" justify-content-center>
+        <ion-col>
+          <ion-img src="assets/icon/logo.png"></ion-img>
+          <h3>Authenticate your account</h3>
+          <ion-item>
+            <ion-label position="stacked">Authentication Code</ion-label>
+            <ion-input name="authentication" type="text" [(ngModel)]="authentication" required></ion-input>
+          </ion-item>
+          <ion-button color="secondary" size="large" type="submit" [disabled]="form.invalid" expand="block">Authenticate</ion-button>
+          <ion-button color="tertiary" size="large" expand="block" (click)="regenerateAuthenticationCode()">Send Authentication Code Again</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>

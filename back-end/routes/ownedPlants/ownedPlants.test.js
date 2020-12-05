@@ -1,16 +1,17 @@
 const app = require('../../server');
-const Auth = require('../../utils/auth');
 const ErrorMessage = require('../../utils/errorMessage');
 const { expect } = require('chai');
+const ObjectIdHelper = require('../../utils/objectIdHelper');
 const OwnedPlant = require('../../models/ownedPlant/ownedPlant');
 const request = require('supertest');
 const sinon = require('sinon');
+const User = require('../../models/user/user');
 
 const error = 'some error';
 const email = 'something@something.com';
 const id = '456';
 const userId = '123';
-const password = 'some password';
+const token = 'some token';
 const amountWaterMl = 100;
 const lastWatered = new Date();
 const name = 'cactus';
@@ -29,8 +30,8 @@ let findStub;
 let saveDocStub;
 
 function getAll() {
-    assertIdMatchesStub = sinon.stub(Auth, 'assertIdMatches');
-    authenticateRequestStub = sinon.stub(Auth, 'authenticateRequest');
+    assertIdMatchesStub = sinon.stub(ObjectIdHelper, 'assertIdMatches');
+    authenticateRequestStub = sinon.stub(User, 'authenticateRequest');
     createStub = sinon.stub(ErrorMessage, 'create');
     findByIdStub = sinon.stub(OwnedPlant, 'findById');
     findByIdAnDeleteStub = sinon.stub(OwnedPlant, 'findByIdAndDelete');
@@ -53,10 +54,10 @@ describe('DELETE', () => {
         beforeEach(getAll);
         afterEach(restoreAll);
 
-        it('should reject when error thrown by Auth.authenticateRequest()', async () => {
+        it('should reject when error thrown by User.authenticateRequest()', async () => {
             authenticateRequestStub.throws(error);
 
-            const res = await request(app).delete(`/ownedPlants/${id}`).set(Auth.header, Auth.valueForHeader(email, password));
+            const res = await request(app).delete(`/ownedPlants/${id}`).set(User.header(), User.valueForHeader(email, token));
 
             expect(res.status).to.eql(500);
             expect(JSON.parse(res.error.text).name).to.eql(error);
@@ -70,11 +71,11 @@ describe('DELETE', () => {
             authenticateRequestStub.returns(new Promise((resolve) => resolve(user)));
             findByIdStub.throws(error);
 
-            const res = await request(app).delete(`/ownedPlants/${id}`).set(Auth.header, Auth.valueForHeader(email, password));
+            const res = await request(app).delete(`/ownedPlants/${id}`).set(User.header(), User.valueForHeader(email, token));
 
             expect(res.status).to.eql(500);
             expect(JSON.parse(res.error.text).name).to.eql(error);
-            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[Auth.header.toLowerCase()]).to.eql(Auth.valueForHeader(email, password));
+            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[User.header().toLowerCase()]).to.eql(User.valueForHeader(email, token));
             expect(findByIdStub.calledOnceWith(id)).to.be.true;
             expect(assertIdMatchesStub.called).to.be.false;
             expect(findByIdAnDeleteStub.called).to.be.false;
@@ -86,28 +87,28 @@ describe('DELETE', () => {
             findByIdStub.returns(new Promise((resolve) => resolve(null)));
             createStub.returns(error);
 
-            const res = await request(app).delete(`/ownedPlants/${id}`).set(Auth.header, Auth.valueForHeader(email, password));
+            const res = await request(app).delete(`/ownedPlants/${id}`).set(User.header(), User.valueForHeader(email, token));
 
             expect(res.status).to.eql(500);
             expect(res.error.text).to.eql(error);
-            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[Auth.header.toLowerCase()]).to.eql(Auth.valueForHeader(email, password));
+            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[User.header().toLowerCase()]).to.eql(User.valueForHeader(email, token));
             expect(findByIdStub.calledOnceWith(id)).to.be.true;
             expect(createStub.calledOnceWith(`Owned plant (${id}) does not exist.`, ErrorMessage.codes.NOT_FOUND)).to.be.true;
             expect(assertIdMatchesStub.called).to.be.false;
             expect(findByIdAnDeleteStub.called).to.be.false;
         });
 
-        it('should reject when error thrown by Auth.assertIdMatches()', async () => {
+        it('should reject when error thrown by ObjectIdHelper.assertIdMatches()', async () => {
             const user = { _id: userId };
             authenticateRequestStub.returns(new Promise((resolve) => resolve(user)));
             findByIdStub.returns(new Promise((resolve) => resolve({ _userId: userId })));
             assertIdMatchesStub.throws(error);
 
-            const res = await request(app).delete(`/ownedPlants/${id}`).set(Auth.header, Auth.valueForHeader(email, password));
+            const res = await request(app).delete(`/ownedPlants/${id}`).set(User.header(), User.valueForHeader(email, token));
 
             expect(res.status).to.eql(500);
             expect(JSON.parse(res.error.text).name).to.eql(error);
-            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[Auth.header.toLowerCase()]).to.eql(Auth.valueForHeader(email, password));
+            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[User.header().toLowerCase()]).to.eql(User.valueForHeader(email, token));
             expect(findByIdStub.calledOnceWith(id)).to.be.true;
             expect(assertIdMatchesStub.calledOnceWith(userId, userId)).to.be.true;
             expect(findByIdAnDeleteStub.called).to.be.false;
@@ -120,11 +121,11 @@ describe('DELETE', () => {
             assertIdMatchesStub.returns(null);
             findByIdAnDeleteStub.throws(error);
 
-            const res = await request(app).delete(`/ownedPlants/${id}`).set(Auth.header, Auth.valueForHeader(email, password));
+            const res = await request(app).delete(`/ownedPlants/${id}`).set(User.header(), User.valueForHeader(email, token));
 
             expect(res.status).to.eql(500);
             expect(JSON.parse(res.error.text).name).to.eql(error);
-            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[Auth.header.toLowerCase()]).to.eql(Auth.valueForHeader(email, password));
+            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[User.header().toLowerCase()]).to.eql(User.valueForHeader(email, token));
             expect(findByIdStub.calledOnceWith(id)).to.be.true;
             expect(assertIdMatchesStub.calledOnceWith(userId, userId)).to.be.true;
             expect(findByIdAnDeleteStub.calledOnceWith(id)).to.be.true;
@@ -137,11 +138,11 @@ describe('DELETE', () => {
             assertIdMatchesStub.returns(null);
             findByIdAnDeleteStub.returns(null);
 
-            const res = await request(app).delete(`/ownedPlants/${id}`).set(Auth.header, Auth.valueForHeader(email, password));
+            const res = await request(app).delete(`/ownedPlants/${id}`).set(User.header(), User.valueForHeader(email, token));
 
             expect(res.status).to.eql(200);
             expect(res.body.ownedPlant).to.eql({ _userId: userId });
-            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[Auth.header.toLowerCase()]).to.eql(Auth.valueForHeader(email, password));
+            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[User.header().toLowerCase()]).to.eql(User.valueForHeader(email, token));
             expect(findByIdStub.calledOnceWith(id)).to.be.true;
             expect(assertIdMatchesStub.calledOnceWith(userId, userId)).to.be.true;
             expect(findByIdAnDeleteStub.calledOnceWith(id)).to.be.true;
@@ -154,14 +155,14 @@ describe('GET', () => {
         beforeEach(getAll);
         afterEach(restoreAll);
 
-        it('should reject when error thrown by Auth.authenticateRequest()', async () => {
+        it('should reject when error thrown by User.authenticateRequest()', async () => {
             authenticateRequestStub.throws(error);
 
-            const res = await request(app).get('/ownedPlants').set(Auth.header, Auth.valueForHeader(email, password));
+            const res = await request(app).get('/ownedPlants').set(User.header(), User.valueForHeader(email, token));
 
             expect(res.status).to.eql(500);
             expect(JSON.parse(res.error.text).name).to.eql(error);
-            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[Auth.header.toLowerCase()]).to.eql(Auth.valueForHeader(email, password));
+            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[User.header().toLowerCase()]).to.eql(User.valueForHeader(email, token));
             expect(findStub.called).to.eql(false);
         });
 
@@ -170,11 +171,11 @@ describe('GET', () => {
             authenticateRequestStub.returns(new Promise((resolve) => resolve(user)));
             findStub.throws(error);
 
-            const res = await request(app).get('/ownedPlants').set(Auth.header, Auth.valueForHeader(email, password));
+            const res = await request(app).get('/ownedPlants').set(User.header(), User.valueForHeader(email, token));
 
             expect(res.status).to.eql(500);
             expect(JSON.parse(res.error.text).name).to.eql(error);
-            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[Auth.header.toLowerCase()]).to.eql(Auth.valueForHeader(email, password));
+            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[User.header().toLowerCase()]).to.eql(User.valueForHeader(email, token));
             expect(findStub.getCalls()[0].firstArg).to.eql({ _userId: user._id });
         });
 
@@ -184,10 +185,10 @@ describe('GET', () => {
             authenticateRequestStub.returns(new Promise((resolve) => resolve(user)));
             findStub.returns(new Promise((resolve) => resolve(ownedPlants)));
 
-            const res = await request(app).get('/ownedPlants').set(Auth.header, Auth.valueForHeader(email, password));
+            const res = await request(app).get('/ownedPlants').set(User.header(), User.valueForHeader(email, token));
 
             expect(res.body.ownedPlants).to.eql(ownedPlants);
-            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[Auth.header.toLowerCase()]).to.eql(Auth.valueForHeader(email, password));
+            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[User.header().toLowerCase()]).to.eql(User.valueForHeader(email, token));
             expect(findStub.getCalls()[0].firstArg).to.eql({ _userId: user._id });
         });
     });
@@ -198,14 +199,14 @@ describe('POST', () => {
         beforeEach(getAll);
         afterEach(restoreAll);
 
-        it('should reject when error thrown by Auth.authenticateRequest()', async () => {
+        it('should reject when error thrown by User.authenticateRequest()', async () => {
             authenticateRequestStub.throws(error);
 
-            const res = await request(app).post('/ownedPlants').set(Auth.header, Auth.valueForHeader(email, password));
+            const res = await request(app).post('/ownedPlants').set(User.header(), User.valueForHeader(email, token));
 
             expect(res.status).to.eql(500);
             expect(JSON.parse(res.error.text).name).to.eql(error);
-            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[Auth.header.toLowerCase()]).to.eql(Auth.valueForHeader(email, password));
+            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[User.header().toLowerCase()]).to.eql(User.valueForHeader(email, token));
             expect(saveDocStub.called).to.eql(false);
         });
 
@@ -214,7 +215,7 @@ describe('POST', () => {
             authenticateRequestStub.returns(new Promise((resolve) => resolve(user)));
             saveDocStub.throws(error);
 
-            const res = await request(app).post('/ownedPlants').set(Auth.header, Auth.valueForHeader(email, password)).send({
+            const res = await request(app).post('/ownedPlants').set(User.header(), User.valueForHeader(email, token)).send({
                 ownedPlant: {
                     amountWaterMl,
                     lastWatered,
@@ -225,7 +226,7 @@ describe('POST', () => {
 
             expect(res.status).to.eql(500);
             expect(JSON.parse(res.error.text).name).to.eql(error);
-            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[Auth.header.toLowerCase()]).to.eql(Auth.valueForHeader(email, password));
+            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[User.header().toLowerCase()]).to.eql(User.valueForHeader(email, token));
             expect(saveDocStub.calledOnceWith({
                 _userId: user._id,
                 amountWaterMl,
@@ -247,11 +248,11 @@ describe('POST', () => {
             authenticateRequestStub.returns(new Promise((resolve) => resolve(user)));
             saveDocStub.returns(new Promise((resolve) => resolve('the new plant')));
 
-            const res = await request(app).post('/ownedPlants').set(Auth.header, Auth.valueForHeader(email, password)).send({ ownedPlant });
+            const res = await request(app).post('/ownedPlants').set(User.header(), User.valueForHeader(email, token)).send({ ownedPlant });
 
             const resOwnedPlant = res.body.ownedPlant;
 
-            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[Auth.header.toLowerCase()]).to.eql(Auth.valueForHeader(email, password));
+            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[User.header().toLowerCase()]).to.eql(User.valueForHeader(email, token));
             expect(saveDocStub.calledOnceWith(ownedPlant)).to.be.true;
             expect(resOwnedPlant).to.eql('the new plant');
         });
@@ -263,14 +264,14 @@ describe('PUT', () => {
         beforeEach(getAll);
         afterEach(restoreAll);
 
-        it('should reject when error thrown by Auth.authenticateRequest()', async () => {
+        it('should reject when error thrown by User.authenticateRequest()', async () => {
             authenticateRequestStub.throws(error);
 
-            const res = await request(app).put(`/ownedPlants/${id}`).set(Auth.header, Auth.valueForHeader(email, password));
+            const res = await request(app).put(`/ownedPlants/${id}`).set(User.header(), User.valueForHeader(email, token));
 
             expect(res.status).to.eql(500);
             expect(JSON.parse(res.error.text).name).to.eql(error);
-            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[Auth.header.toLowerCase()]).to.eql(Auth.valueForHeader(email, password));
+            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[User.header().toLowerCase()]).to.eql(User.valueForHeader(email, token));
             expect(findByIdStub.called).to.eql(false);
             expect(assertIdMatchesStub.called).to.eql(false);
             expect(saveDocStub.called).to.eql(false);
@@ -281,7 +282,7 @@ describe('PUT', () => {
             authenticateRequestStub.returns(new Promise((resolve) => resolve(user)));
             findByIdStub.throws(error);
             
-            const res = await request(app).put(`/ownedPlants/${id}`).set(Auth.header, Auth.valueForHeader(email, password)).send({
+            const res = await request(app).put(`/ownedPlants/${id}`).set(User.header(), User.valueForHeader(email, token)).send({
                 ownedPlant: {
                     amountWaterMl: newAmountWaterMl,
                     name: newName,
@@ -291,7 +292,7 @@ describe('PUT', () => {
 
             expect(res.status).to.eql(500);
             expect(JSON.parse(res.error.text).name).to.eql(error);
-            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[Auth.header.toLowerCase()]).to.eql(Auth.valueForHeader(email, password));
+            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[User.header().toLowerCase()]).to.eql(User.valueForHeader(email, token));
             expect(findByIdStub.calledOnceWith(id)).to.be.true;
             expect(assertIdMatchesStub.called).to.be.false;
             expect(saveDocStub.called).to.be.false;
@@ -303,7 +304,7 @@ describe('PUT', () => {
             findByIdStub.returns(new Promise((resolve) => resolve(null)));
             createStub.returns(error);
             
-            const res = await request(app).put(`/ownedPlants/${id}`).set(Auth.header, Auth.valueForHeader(email, password)).send({
+            const res = await request(app).put(`/ownedPlants/${id}`).set(User.header(), User.valueForHeader(email, token)).send({
                 ownedPlant: {
                     amountWaterMl: newAmountWaterMl,
                     name: newName,
@@ -313,20 +314,20 @@ describe('PUT', () => {
 
             expect(res.status).to.eql(500);
             expect(res.error.text).to.eql(error);
-            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[Auth.header.toLowerCase()]).to.eql(Auth.valueForHeader(email, password));
+            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[User.header().toLowerCase()]).to.eql(User.valueForHeader(email, token));
             expect(findByIdStub.calledOnceWith(id)).to.be.true;
             expect(createStub.calledOnceWith(`Owned plant (${id}) does not exist.`, ErrorMessage.codes.NOT_FOUND));
             expect(assertIdMatchesStub.called).to.be.false;
             expect(saveDocStub.called).to.be.false;
         });
 
-        it('should reject when error thrown by Auth.assertIdMatches()', async () => {
+        it('should reject when error thrown by ObjectIdHelper.assertIdMatches()', async () => {
             const user = { _id: userId };
             authenticateRequestStub.returns(new Promise((resolve) => resolve(user)));
             findByIdStub.returns(new Promise((resolve) => resolve({ _userId: userId })));
             assertIdMatchesStub.throws(error);
 
-            const res = await request(app).put(`/ownedPlants/${id}`).set(Auth.header, Auth.valueForHeader(email, password)).send({
+            const res = await request(app).put(`/ownedPlants/${id}`).set(User.header(), User.valueForHeader(email, token)).send({
                 ownedPlant: {
                     amountWaterMl: newAmountWaterMl,
                     name: newName,
@@ -336,7 +337,7 @@ describe('PUT', () => {
 
             expect(res.status).to.eql(500);
             expect(JSON.parse(res.error.text).name).to.eql(error);
-            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[Auth.header.toLowerCase()]).to.eql(Auth.valueForHeader(email, password));
+            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[User.header().toLowerCase()]).to.eql(User.valueForHeader(email, token));
             expect(findByIdStub.calledOnceWith(id)).to.be.true;
             expect(assertIdMatchesStub.calledOnceWith(userId, userId)).to.be.true;
             expect(saveDocStub.called).to.be.false;
@@ -349,7 +350,7 @@ describe('PUT', () => {
             assertIdMatchesStub.returns(null);
             saveDocStub.throws(error);
 
-            const res = await request(app).put(`/ownedPlants/${id}`).set(Auth.header, Auth.valueForHeader(email, password)).send({
+            const res = await request(app).put(`/ownedPlants/${id}`).set(User.header(), User.valueForHeader(email, token)).send({
                 ownedPlant: {
                     amountWaterMl: newAmountWaterMl,
                     lastWatered: newLastWatered,
@@ -360,7 +361,7 @@ describe('PUT', () => {
 
             expect(res.status).to.eql(500);
             expect(JSON.parse(res.error.text).name).to.eql(error);
-            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[Auth.header.toLowerCase()]).to.eql(Auth.valueForHeader(email, password));
+            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[User.header().toLowerCase()]).to.eql(User.valueForHeader(email, token));
             expect(findByIdStub.calledOnceWith(id)).to.be.true;
             expect(assertIdMatchesStub.calledOnceWith(userId, userId)).to.be.true;
             expect(saveDocStub.calledOnceWith({
@@ -382,7 +383,7 @@ describe('PUT', () => {
             assertIdMatchesStub.returns(null);
             saveDocStub.returns(new Promise((resolve) => resolve('the updated plant')));
 
-            const res = await request(app).put(`/ownedPlants/${id}`).set(Auth.header, Auth.valueForHeader(email, password)).send({
+            const res = await request(app).put(`/ownedPlants/${id}`).set(User.header(), User.valueForHeader(email, token)).send({
                 ownedPlant: {
                     _id: newId,
                     _userId: newUserId,
@@ -394,7 +395,7 @@ describe('PUT', () => {
             });
 
             expect(res.status).to.eql(200);
-            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[Auth.header.toLowerCase()]).to.eql(Auth.valueForHeader(email, password));
+            expect(authenticateRequestStub.getCalls()[0].firstArg.headers[User.header().toLowerCase()]).to.eql(User.valueForHeader(email, token));
             expect(findByIdStub.calledOnceWith(id)).to.be.true;
             expect(assertIdMatchesStub.calledOnceWith(userId, userId)).to.be.true;
             expect(saveDocStub.calledOnceWith({

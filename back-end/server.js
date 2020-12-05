@@ -3,11 +3,11 @@ const { Environment, environment } = require('./environment');
 const cors = require('cors');
 const express = require('express');
 const app = express();
-const Auth = require('./utils/auth');
 const fs = require('fs');
 const http = require('http');
 const https = require('https');
 const mongoose = require('mongoose');
+const User = require('./models/user/user');
 
 async function startServer() {
     await mongoose.connect(`${environment.mongo.url}:${environment.mongo.port}/${environment.db}`, {
@@ -22,7 +22,7 @@ async function startServer() {
     app.use((req, res, next) => {
         res.setHeader('Access-Control-Allow-Credentials', true);
         res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Access-Control-Allow-Headers', `Origin, X-Requested-With, Content-Type, Accept, Access, ${Auth.header}`);
+        res.setHeader('Access-Control-Allow-Headers', `Origin, X-Requested-With, Content-Type, Accept, Access, ${User.header()}`);
         res.setHeader('Access-Control-Allow-Methods', 'DELETE, GET, POST, PUT');	
         next();
     });

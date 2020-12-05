@@ -7,24 +7,22 @@
 <ion-content>
   <form #form="ngForm" (ngSubmit)="login()">
     <ion-grid>
-      <ion-row color="primary" justify-content-center>
+      <ion-row>
         <ion-col>
           <ion-img src="assets/icon/logo.png"></ion-img>
           <h3>Welcome back!</h3>
-          <div padding>
-            <ion-item>
-              <ion-input type="email" placeholder="Email" [(ngModel)]="email" name="email" required></ion-input>
-            </ion-item>
-            <ion-item>
-              <ion-input type="password" placeholder="Password" [(ngModel)]="password" name="password" required></ion-input>
-            </ion-item>
-          </div>
-          <div padding>
-            <ion-button color="secondary" size="large" type="submit" [disabled]="form.invalid" expand="block">Login</ion-button>
-          </div>
-          <div padding>
-            <p>New? <a routerLink="/register">Create an account</a></p>
-          </div>
+          <ion-item>
+            <ion-label position="stacked">Email</ion-label>
+            <ion-input type="email" [(ngModel)]="email" name="email" required></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">Password</ion-label>
+            <ion-input type="password" [(ngModel)]="password" name="password" required></ion-input>
+          </ion-item>
+          <ion-button color="secondary" size="large" type="submit" [disabled]="form.invalid" expand="full">Login</ion-button>
+          <br><br><br>
+          <ion-button color="success" expand="full" routerLink="/register">Create an account</ion-button>
+          <ion-button color="medium" expand="full" routerLink="/forgot-password">Forgot password?</ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>

@@ -1,0 +1,34 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Guide</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen scroll-y="false">
+  <ion-slides>
+    <ion-slide class="slide">
+      <div class="slide">
+        <ion-img src="assets/icon/logo.png"></ion-img>
+        <h2>Welcome</h2>
+        <p><b>Plantee</b> is an easy to use water tracking tool that can help you consistently monitor the amount of water you are giving your plants.</p>
+      </div>
+    </ion-slide>
+    <ion-slide>
+      <div class="slide">
+        <ion-img src="assets/owned-plants-example.png"></ion-img>
+        <h2>Monitoring</h2>
+        <p>To <b>care for your plants</b>, you can add as many plants as you would like to your collection. Specify the amount of water they need, and the frequency of watering. You will be reminded to check your plants everyday. Once you have watered one, press the <b>water droplet button</b>.</p>
+      </div>
+    </ion-slide>
+    <ion-slide>
+      <div class="slide">
+        <h2>Happy Planting!</h2>
+        <p>If you need anything, please contact the team at <b>plantee.info@gmail.com</b></p>
+        <ion-button fill="clear" routerLink="/owned-plants">Start Planting <ion-icon slot="end" name="arrow-forward"></ion-icon></ion-button>
+      </div>
+    </ion-slide>
+  </ion-slides>
+</ion-content>

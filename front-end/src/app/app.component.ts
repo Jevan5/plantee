@@ -6,6 +6,8 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AuthService } from './services/auth/auth.service';
 import { ResponsiveService } from './services/responsive/responsive.service';
 import { Router } from '@angular/router';
+import { Plugins } from '@capacitor/core';
+const { LocalNotifications } = Plugins;
 
 @Component({
   selector: 'app-root',
@@ -13,7 +15,7 @@ import { Router } from '@angular/router';
   styleUrls: ['app.component.scss']
 })
 export class AppComponent implements OnInit {
-  private actions = [
+  actions = [
     {
       title: 'Logout',
       func: async () => {
@@ -30,10 +32,14 @@ export class AppComponent implements OnInit {
     }
   ];
 
-  private pages = [
+  pages = [
     {
       title: 'Owned Plants',
       url: '/owned-plants'
+    },
+    {
+      title: 'Guide',
+      url: '/guide'
     }
   ];
 
@@ -41,20 +47,38 @@ export class AppComponent implements OnInit {
     private platform: Platform,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
-    private auth: AuthService,
+    public auth: AuthService,
     private responsive: ResponsiveService,
     private router: Router
   ) {
     this.initializeApp();
-
-    this.autoLogin();
   }
 
-  initializeApp() {
-    this.platform.ready().then(() => {
-      this.statusBar.styleDefault();
-      this.splashScreen.hide();
-    });
+  async initializeApp() {
+    await this.platform.ready();
+    this.statusBar.styleDefault();
+    this.splashScreen.hide();
+
+    await this.autoLogin();
+    
+    if ((await LocalNotifications.requestPermission()).granted) {
+      const now = new Date();
+      const tomorrowFivePm = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 17, 0, 0, 0);
+
+      await LocalNotifications.schedule({
+        notifications: [
+          {
+            id: 1,
+            title: 'Plantee',
+            body: 'Daily check-in on your plants',
+            schedule: {
+              at: tomorrowFivePm,
+              every: 'day'  
+            }
+          }
+        ]
+      });
+    }
   }
 
   async autoLogin(): Promise<void> {
