@@ -1,6 +1,5 @@
-import { Component, OnInit, enableProdMode } from '@angular/core';
-
-import { Platform } from '@ionic/angular';
+import { Component, OnInit } from '@angular/core';
+import { Platform, MenuController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AuthService } from './services/auth/auth.service';
@@ -49,7 +48,8 @@ export class AppComponent implements OnInit {
     private statusBar: StatusBar,
     public auth: AuthService,
     private responsive: ResponsiveService,
-    private router: Router
+    private router: Router,
+    private menuController: MenuController
   ) {
     this.initializeApp();
   }

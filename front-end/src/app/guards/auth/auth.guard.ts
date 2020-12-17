@@ -28,7 +28,10 @@ export class AuthGuard implements CanActivate {
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     if (AuthGuard.notLoggedInUrls.includes(state.url)) {
       if (!this.auth.loggedIn) return true;
-      else return this.defaultLoggedInUrlTree;
+      else {
+        console.log(this.defaultLoggedInUrlTree);
+        return this.defaultLoggedInUrlTree;
+      }
     } else {
       if (this.auth.loggedIn) return true;
       else return this.defaultNotLoggedInUrlTree;

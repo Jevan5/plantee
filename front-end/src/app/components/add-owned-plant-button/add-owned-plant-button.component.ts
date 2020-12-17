@@ -17,7 +17,8 @@ export class SaveOwnedPlantButtonComponent implements OnInit {
 
   async presentModal(): Promise<void> {
     const modal = await this.modalController.create({
-      component: SaveOwnedPlantModalComponent
+      component: SaveOwnedPlantModalComponent,
+      cssClass: 'orange-modal'
     });
 
     await modal.present();

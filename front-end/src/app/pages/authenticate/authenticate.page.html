@@ -16,7 +16,7 @@
             <ion-input name="authentication" type="text" [(ngModel)]="authentication" required></ion-input>
           </ion-item>
           <ion-button color="secondary" size="large" type="submit" [disabled]="form.invalid" expand="block">Authenticate</ion-button>
-          <ion-button color="tertiary" size="large" expand="block" (click)="regenerateAuthenticationCode()">Send Authentication Code Again</ion-button>
+          <ion-button color="tertiary" size="small" expand="block" (click)="regenerateAuthenticationCode()">Send Authentication Code Again</ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>

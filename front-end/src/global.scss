@@ -28,9 +28,8 @@
 ion-toolbar > ion-title {
     text-align: center;
     color: var(--ion-color-primary);
-    padding-right: 72px;
 }
 
-ion-toolbar > ion-title:only-child {
-    padding-right: 20px;
+.orange-modal .modal-wrapper {
+    border: 3px solid var(--ion-color-primary);
 }

@@ -30,11 +30,14 @@ export class AuthenticatePage implements OnInit {
     private router: Router
   ) {
     this.route.queryParams.subscribe((params) => {
+      if (!this.router.getCurrentNavigation().extras.hasOwnProperty('state')) {
+        this.router.navigateByUrl('/login');
+        return;
+      }
+
       this.email = this.router.getCurrentNavigation().extras.state.email;
       this.password = this.router.getCurrentNavigation().extras.state.password;
       this.mode = this.router.getCurrentNavigation().extras.state.mode;
-
-      console.log(this);
     });
   }
 
