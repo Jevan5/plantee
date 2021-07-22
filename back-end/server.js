@@ -37,8 +37,8 @@ async function startServer() {
     let server;
     if (environment.mode === Environment.modeEnum.PROD) {
         server = https.createServer({
-            cert: fs.readFileSync('./cert/server.crt', 'utf-8'),
-            key: fs.readFileSync('./cert/server.key', 'utf-8')
+            cert: fs.readFileSync('../../cert/server.crt', 'utf-8'),
+            key: fs.readFileSync('../../cert/server.key', 'utf-8')
         }, app);
     } else {
         server = http.createServer(app);
