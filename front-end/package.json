@@ -8,6 +8,7 @@
     "start": "ng serve",
     "build": "ng build",
     "build:prod": "ng build --prod",
+    "build:xcode": "ionic build --prod; npx cap init; npx cap add ios; npx cap sync; npx cap copy; npx cap open ios;",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

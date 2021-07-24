@@ -26,7 +26,7 @@ case Environment.modeEnum.DEV:
     environment = new Environment(Environment.modeEnum.DEV, 8021, 'http://localhost', 27017, 'mongodb://localhost');
     break;
 case Environment.modeEnum.PROD:
-    environment = new Environment(Environment.modeEnum.PROD, 443, 'https://joshuaevans.ca', 27017, 'mongodb://localhost');
+    environment = new Environment(Environment.modeEnum.PROD, 8023, 'https://joshuaevans.ca', 27017, 'mongodb://localhost');
     break;
 case Environment.modeEnum.TEST:
     environment = new Environment(Environment.modeEnum.TEST, 8025, 'http://localhost', 27017, 'mongodb://localhost');
